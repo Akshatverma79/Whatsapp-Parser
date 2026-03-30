@@ -1,6 +1,8 @@
 import { create } from 'zustand';
 import { ParsedMessage, ChatParticipant, BlobStore } from '@/types';
 
+export type Theme = 'dark' | 'light';
+
 interface ChatState {
   // Session
   sessionId: string | null;
@@ -18,6 +20,14 @@ interface ChatState {
   // UI state
   searchQuery: string;
   showOwnerModal: boolean;
+  theme: Theme;
+
+  // Search navigation
+  searchMatchIndex: number;
+  searchMatchIds: string[];
+
+  // Persistence
+  hasSavedSession: boolean;
 
   // Actions
   setLoading: (loading: boolean, stage?: string, progress?: number) => void;
@@ -32,8 +42,13 @@ interface ChatState {
   setOwnerName: (name: string) => void;
   setShowOwnerModal: (show: boolean) => void;
   setSearchQuery: (q: string) => void;
+  setSearchMatchIndex: (idx: number) => void;
+  setSearchMatchIds: (ids: string[]) => void;
   clearSession: () => void;
   resolveBlobUrl: (filename: string) => string | undefined;
+  toggleTheme: () => void;
+  setTheme: (t: Theme) => void;
+  setHasSavedSession: (has: boolean) => void;
 }
 
 export const useChatStore = create<ChatState>((set, get) => ({
@@ -48,6 +63,10 @@ export const useChatStore = create<ChatState>((set, get) => ({
   loadingProgress: 0,
   searchQuery: '',
   showOwnerModal: false,
+  theme: 'dark',
+  searchMatchIndex: 0,
+  searchMatchIds: [],
+  hasSavedSession: false,
 
   setLoading: (loading, stage = '', progress = 0) =>
     set({ isLoading: loading, loadingStage: stage, loadingProgress: progress }),
@@ -71,7 +90,9 @@ export const useChatStore = create<ChatState>((set, get) => ({
   },
 
   setShowOwnerModal: (show) => set({ showOwnerModal: show }),
-  setSearchQuery: (q) => set({ searchQuery: q }),
+  setSearchQuery: (q) => set({ searchQuery: q, searchMatchIndex: 0, searchMatchIds: [] }),
+  setSearchMatchIndex: (idx) => set({ searchMatchIndex: idx }),
+  setSearchMatchIds: (ids) => set({ searchMatchIds: ids }),
 
   clearSession: () =>
     set({
@@ -83,7 +104,28 @@ export const useChatStore = create<ChatState>((set, get) => ({
       blobStore: {},
       searchQuery: '',
       showOwnerModal: false,
+      searchMatchIndex: 0,
+      searchMatchIds: [],
     }),
 
   resolveBlobUrl: (filename) => get().blobStore[filename],
+
+  toggleTheme: () => {
+    const next = get().theme === 'dark' ? 'light' : 'dark';
+    set({ theme: next });
+    if (typeof window !== 'undefined') {
+      document.documentElement.setAttribute('data-theme', next);
+      localStorage.setItem('wa-theme', next);
+    }
+  },
+
+  setTheme: (t) => {
+    set({ theme: t });
+    if (typeof window !== 'undefined') {
+      document.documentElement.setAttribute('data-theme', t);
+      localStorage.setItem('wa-theme', t);
+    }
+  },
+
+  setHasSavedSession: (has) => set({ hasSavedSession: has }),
 }));

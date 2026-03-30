@@ -83,11 +83,13 @@ a:hover { text-decoration: underline; }
 /* ─── Message Bubbles ────────────────────────────────────── */
 .bubble {
   position: relative;
-  max-width: 65%;
-  padding: 6px 9px 8px 9px;
+  max-width: 60%;
+  min-width: 80px;
+  padding: 6px 8px 6px 9px;
   border-radius: var(--wa-radius-bubble);
   word-wrap: break-word;
-  line-height: 1.4;
+  overflow-wrap: break-word;
+  line-height: 1.35;
   box-shadow: var(--wa-shadow-bubble);
 }
 
@@ -131,6 +133,7 @@ a:hover { text-decoration: underline; }
   color: var(--wa-text-primary);
   font-size: 14.2px;
   white-space: pre-wrap;
+  display: inline;
 }
 
 .bubble-meta {
@@ -138,11 +141,12 @@ a:hover { text-decoration: underline; }
   align-items: center;
   gap: 3px;
   float: right;
-  margin-left: 8px;
-  margin-top: 2px;
+  margin-left: 10px;
+  margin-top: 4px;
   font-size: 11px;
   color: var(--wa-text-muted);
   line-height: 1;
+  white-space: nowrap;
 }
 
 .sender-name {
@@ -421,3 +425,114 @@ a:hover { text-decoration: underline; }
 /* ─── Scrollbar for chat ─────────────────────────────────── */
 .chat-scroll::-webkit-scrollbar { width: 5px; }
 .chat-scroll::-webkit-scrollbar-thumb { background: #374248; border-radius: 3px; }
+
+/* ─── Search navigation ──────────────────────────────────── */
+.search-match-active {
+  background: #ffeb3b88 !important;
+  border-radius: 2px;
+  padding: 0 2px;
+  outline: 2px solid #ffeb3b;
+  outline-offset: 1px;
+}
+
+.search-nav-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px;
+  font-size: 12px;
+}
+
+/* ─── Light Theme ────────────────────────────────────────── */
+:root[data-theme="light"],
+html[data-theme="light"],
+body[data-theme="light"] {
+  --wa-bg-app:         #efeae2;
+  --wa-bg-chat:        #efeae2;
+  --wa-bg-sidebar:     #ffffff;
+  --wa-bg-sent:        #d9fdd3;
+  --wa-bg-received:    #ffffff;
+  --wa-bg-input:       #f0f2f5;
+  --wa-bg-header:      #f0f2f5;
+  --wa-bg-system:      #fdf4c5;
+  --wa-bg-date:        #fdf4c5;
+  --wa-bg-hover:       #f5f6f6;
+  --wa-bg-search:      #f0f2f5;
+  --wa-bg-modal:       #ffffff;
+  --wa-bg-overlay:     rgba(0,0,0,0.45);
+  --wa-bg-upload:      #f0f2f5;
+  --wa-bg-progress:    #00a884;
+
+  --wa-accent:         #00a884;
+  --wa-accent-hover:   #00906f;
+  --wa-accent-muted:   #00a88418;
+  --wa-green-light:    #25d366;
+
+  --wa-text-primary:   #111b21;
+  --wa-text-secondary: #667781;
+  --wa-text-muted:     #8696a0;
+  --wa-text-system:    #54656f;
+  --wa-text-link:      #027eb5;
+
+  --wa-tick-single:    #8696a0;
+  --wa-tick-double:    #53bdeb;
+
+  --wa-border:         #e9edef;
+  --wa-border-light:   #d1d7db;
+
+  --wa-shadow:         0 1px 3px rgba(0,0,0,0.08);
+  --wa-shadow-bubble:  0 1px 0.5px rgba(0,0,0,0.08);
+}
+
+[data-theme="light"] .chat-bg {
+  background-color: #efeae2;
+  background-image: url("data:image/svg+xml,%3Csvg width='400' height='400' xmlns='http://www.w3.org/2000/svg'%3E%3Cdefs%3E%3Cpattern id='p' width='40' height='40' patternUnits='userSpaceOnUse'%3E%3Cpath d='M0 20 Q10 0 20 20 Q30 40 40 20' stroke='%2300000006' stroke-width='1.5' fill='none'/%3E%3C/pattern%3E%3C/defs%3E%3Crect width='400' height='400' fill='url(%23p)'/%3E%3C/svg%3E");
+}
+
+[data-theme="light"] .bubble-sent::after {
+  background: var(--wa-bg-sent);
+}
+
+[data-theme="light"] .bubble-received::before {
+  background: var(--wa-bg-received);
+}
+
+[data-theme="light"] .bubble-text {
+  color: var(--wa-text-primary);
+}
+
+[data-theme="light"] .shimmer {
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 600px 100%;
+}
+
+[data-theme="light"] .upload-area {
+  border-color: #d1d7db;
+}
+
+[data-theme="light"] .upload-area:hover,
+[data-theme="light"] .upload-area.drag-over {
+  border-color: var(--wa-accent);
+  background: #00a88410;
+}
+
+[data-theme="light"] ::-webkit-scrollbar-thumb {
+  background: #c5c5c5;
+}
+
+[data-theme="light"] .chat-scroll::-webkit-scrollbar-thumb {
+  background: #c5c5c5;
+}
+
+[data-theme="light"] .search-highlight {
+  background: #fff17688;
+}
+
+/* ─── Theme toggle button animation ──────────────────────── */
+.theme-toggle {
+  transition: transform 0.3s ease;
+}
+.theme-toggle:hover {
+  transform: rotate(30deg);
+}
+
