@@ -30,15 +30,14 @@ yarn-debug.log*
 yarn-error.log*
 .pnpm-debug.log*
 
-# env files (can opt-in for committing if needed)
-.env*
-
-# vercel
-.vercel
+# env files
+.env*.local
 
 # typescript
 *.tsbuildinfo
 next-env.d.ts
-test_data
+
+# local data and agent files
+/test_data/
 AGENTS.md
 CLAUDE.md

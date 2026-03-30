@@ -127,10 +127,12 @@ export default function Home() {
                 <div className="mt-2 flex flex-col gap-1.5 rounded-xl overflow-hidden"
                   style={{ background: 'var(--wa-bg-received)', border: '1px solid var(--wa-border)' }}>
                   {savedSessions.map((s) => (
-                    <button
+                    <div
                       key={s.id}
                       onClick={() => handleLoadSaved(s.id)}
-                      className="flex items-center gap-3 px-4 py-3 text-left transition-colors hover:opacity-80"
+                      role="button"
+                      tabIndex={0}
+                      className="flex items-center gap-3 px-4 py-3 text-left transition-colors hover:opacity-80 cursor-pointer"
                       style={{ borderBottom: '1px solid var(--wa-border)' }}
                     >
                       <div className="w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 text-sm font-bold"
@@ -157,7 +159,7 @@ export default function Home() {
                           <polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/>
                         </svg>
                       </button>
-                    </button>
+                    </div>
                   ))}
                 </div>
               )}
