@@ -201,6 +201,17 @@ export default function FileDropzone() {
         </div>
       )}
 
+      {/* Security Notice */}
+      <div className="w-full max-w-xl rounded-xl p-4 flex items-center gap-3"
+        style={{ background: 'var(--wa-bg-received)', border: '1px solid var(--wa-border)' }}>
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--wa-accent)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="flex-shrink-0">
+          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+        </svg>
+        <p className="text-sm" style={{ color: 'var(--wa-text-primary)' }}>
+          <strong style={{ color: 'var(--wa-accent)' }}>100% Secure & Private.</strong> Your files are processed entirely locally on your device and are never uploaded to any server.
+        </p>
+      </div>
+
       {/* How-to guide */}
       <div className="w-full max-w-xl rounded-2xl overflow-hidden" style={{ background: 'var(--wa-bg-received)', border: '1px solid var(--wa-border)' }}>
         <div className="px-5 py-3 flex items-center gap-2" style={{ borderBottom: '1px solid var(--wa-border)' }}>
