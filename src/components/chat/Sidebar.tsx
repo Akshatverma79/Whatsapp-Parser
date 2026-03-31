@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from 'react';
 import { useChatStore } from '@/store/chatStore';
+import SidebarCalendar from './SidebarCalendar';
 
 export default function Sidebar() {
   const { participants, messages, title, ownerName } = useChatStore();
@@ -19,9 +20,16 @@ export default function Sidebar() {
 
     // Busiest day
     const dayMap: Record<string, number> = {};
+    const activeDaysSet = new Set<string>();
+
     for (const m of messages) {
-      const day = m.date.toDateString();
-      dayMap[day] = (dayMap[day] ?? 0) + 1;
+      const dayStr = m.date.toDateString();
+      dayMap[dayStr] = (dayMap[dayStr] ?? 0) + 1;
+      
+      const y = m.date.getFullYear();
+      const mo = String(m.date.getMonth() + 1).padStart(2, '0');
+      const d = String(m.date.getDate()).padStart(2, '0');
+      activeDaysSet.add(`${y}-${mo}-${d}`);
     }
     const busiestDay = Object.entries(dayMap).sort((a, b) => b[1] - a[1])[0];
 
@@ -31,7 +39,7 @@ export default function Sidebar() {
       return sum + (m.text.match(emojiRegex)?.length ?? 0);
     }, 0);
 
-    return { total, mediaCount, start, end, busiestDay, emojiCount };
+    return { total, mediaCount, start, end, busiestDay, emojiCount, activeDaysSet };
   }, [messages]);
 
   const sorted = [...participants].sort((a, b) => b.messageCount - a.messageCount);
@@ -85,6 +93,9 @@ export default function Sidebar() {
             ))}
           </div>
         </div>
+
+        {/* Calendar Filter */}
+        <SidebarCalendar activeDays={stats.activeDaysSet} />
 
         {/* Busiest day */}
         {stats.busiestDay && (

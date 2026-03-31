@@ -22,7 +22,7 @@ function isSameDay(a: Date, b: Date): boolean {
 export default function MessageList() {
   const {
     messages, participants, searchQuery,
-    searchMatchIndex, setSearchMatchIds,
+    searchMatchIndex, setSearchMatchIds, scrollTargetDate,
   } = useChatStore();
 
   const virtuosoRef = useRef<VirtuosoHandle>(null);
@@ -77,6 +77,22 @@ export default function MessageList() {
       virtuosoRef.current.scrollToIndex({ index: idx, align: 'center', behavior: 'smooth' });
     }
   }, [activeMatchId, items]);
+
+  // Scroll to target date
+  useEffect(() => {
+    if (!scrollTargetDate || !virtuosoRef.current) return;
+    const idx = items.findIndex((item) => {
+      if (item.kind !== 'date') return false;
+      const y = item.date.getFullYear();
+      const m = String(item.date.getMonth() + 1).padStart(2, '0');
+      const d = String(item.date.getDate()).padStart(2, '0');
+      return `${y}-${m}-${d}` === scrollTargetDate;
+    });
+
+    if (idx >= 0) {
+      virtuosoRef.current.scrollToIndex({ index: idx, align: 'start', behavior: 'smooth' });
+    }
+  }, [scrollTargetDate, items]);
 
   // Determine if group chat
   const isGroup = participants.length > 2;

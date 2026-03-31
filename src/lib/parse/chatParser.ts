@@ -75,15 +75,33 @@ export function parseWhatsAppChat(rawText: string): {
   // Also handle DD.MM.YYYY and DD-MM-YYYY separators
   const altDateRegex = /^(\d{1,2}[.\-]\d{1,2}[.\-]\d{2,4}),?\s+(\d{1,2}:\d{2}(?::\d{2})?(?:\s|\u202f)?(?:AM|PM|am|pm)?)\s*[-–]\s*(.*)/;
 
+  // FIRST PASS: Detect Date Format Globally
+  let detectedFormat: 'DD/MM' | 'MM/DD' | 'ambiguous' = 'ambiguous';
+  for (const line of lines) {
+    if (line.length < 5 || (!line.includes('/') && !line.includes('.') && !line.includes('-'))) continue;
+    const trimmed = line.replace(/^\u200e|\u200f|\ufeff/g, '');
+    const match = trimmed.match(androidRegex) || trimmed.match(iosRegex) || trimmed.match(altDateRegex);
+    if (match) {
+      const parts = match[1].replace(/[.\-]/g, '/').split('/');
+      const p0 = parseInt(parts[0], 10);
+      const p1 = parseInt(parts[1], 10);
+      
+      if (p0 > 12) {
+        detectedFormat = 'DD/MM';
+        break; // Globally proven!
+      } else if (p1 > 12) {
+        detectedFormat = 'MM/DD';
+        break; // Globally proven!
+      }
+    }
+  }
+
   let current: RawParsedMessage | null = null;
 
   for (const line of lines) {
     const trimmed = line.replace(/^\u200e|\u200f|\ufeff/g, ''); // Strip BOM and LTR/RTL marks
     
-    const androidMatch = trimmed.match(androidRegex);
-    const iosMatch = trimmed.match(iosRegex);
-    const altMatch = trimmed.match(altDateRegex);
-    const match = androidMatch || iosMatch || altMatch;
+    const match = trimmed.match(androidRegex) || trimmed.match(iosRegex) || trimmed.match(altDateRegex);
 
     if (match) {
       if (current) rawMessages.push(current);
@@ -96,21 +114,17 @@ export function parseWhatsAppChat(rawText: string): {
         const parts = normalizedDate.split('/');
         let day: number, month: number, year: number;
         
-        // Try to auto-detect DD/MM vs MM/DD
-        // If first part > 12, it must be day
-        const p0 = parseInt(parts[0]);
-        const p1 = parseInt(parts[1]);
+        const p0 = parseInt(parts[0], 10);
+        const p1 = parseInt(parts[1], 10);
         
-        if (p0 > 12) {
-          // DD/MM/YYYY
+        if (detectedFormat === 'DD/MM') {
           day = p0;
           month = p1 - 1;
-        } else if (p1 > 12) {
-          // MM/DD/YYYY
+        } else if (detectedFormat === 'MM/DD') {
           month = p0 - 1;
           day = p1;
         } else {
-          // Ambiguous — default to DD/MM (most common globally + WhatsApp default)
+          // If strictly ambiguous, fallback to DD/MM (Global WhatsApp Default)
           day = p0;
           month = p1 - 1;
         }

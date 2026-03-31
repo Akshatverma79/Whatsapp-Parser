@@ -26,6 +26,9 @@ interface ChatState {
   searchMatchIndex: number;
   searchMatchIds: string[];
 
+  // Date scrolling navigation
+  scrollTargetDate: string | null;
+
   // Persistence
   hasSavedSession: boolean;
 
@@ -44,6 +47,7 @@ interface ChatState {
   setSearchQuery: (q: string) => void;
   setSearchMatchIndex: (idx: number) => void;
   setSearchMatchIds: (ids: string[]) => void;
+  setScrollTargetDate: (dateStr: string | null) => void;
   clearSession: () => void;
   resolveBlobUrl: (filename: string) => string | undefined;
   toggleTheme: () => void;
@@ -66,6 +70,7 @@ export const useChatStore = create<ChatState>((set, get) => ({
   theme: 'dark',
   searchMatchIndex: 0,
   searchMatchIds: [],
+  scrollTargetDate: null,
   hasSavedSession: false,
 
   setLoading: (loading, stage = '', progress = 0) =>
@@ -82,6 +87,7 @@ export const useChatStore = create<ChatState>((set, get) => ({
       showOwnerModal: ownerName === null,
       isLoading: false,
       loadingProgress: 0,
+      scrollTargetDate: null,
     }),
 
   setOwnerName: (name) => {
@@ -90,9 +96,10 @@ export const useChatStore = create<ChatState>((set, get) => ({
   },
 
   setShowOwnerModal: (show) => set({ showOwnerModal: show }),
-  setSearchQuery: (q) => set({ searchQuery: q, searchMatchIndex: 0, searchMatchIds: [] }),
+  setSearchQuery: (q) => set({ searchQuery: q, searchMatchIndex: 0, searchMatchIds: [], scrollTargetDate: null }),
   setSearchMatchIndex: (idx) => set({ searchMatchIndex: idx }),
   setSearchMatchIds: (ids) => set({ searchMatchIds: ids }),
+  setScrollTargetDate: (dateStr) => set({ scrollTargetDate: dateStr, searchQuery: '', searchMatchIds: [] }),
 
   clearSession: () =>
     set({
@@ -106,6 +113,7 @@ export const useChatStore = create<ChatState>((set, get) => ({
       showOwnerModal: false,
       searchMatchIndex: 0,
       searchMatchIds: [],
+      scrollTargetDate: null,
     }),
 
   resolveBlobUrl: (filename) => get().blobStore[filename],
