@@ -121,7 +121,6 @@ function MessageBubbleInner({
               style={{ display: imgLoaded ? 'block' : 'none' }}
               onLoad={() => setImgLoaded(true)}
               onClick={() => openLightbox(blobUrl, 'image')}
-              loading="lazy"
             />
             {message.text && (
               <p className="bubble-text" style={{ padding: '4px 6px 0' }}>{highlightText(message.text, searchQuery)}</p>
